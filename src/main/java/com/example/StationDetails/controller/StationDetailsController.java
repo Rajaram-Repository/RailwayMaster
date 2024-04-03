@@ -53,5 +53,11 @@ public class StationDetailsController {
         List<Integer> list = stationDetailsService.findTrainIDs(from,to);
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
-    
+    @GetMapping("/intermittent")
+    public ResponseEntity<List<StationDetails>> getStations(@RequestParam("from") String from,@RequestParam("to") String to){
+        System.out.println(from+"  "+to);
+        List<StationDetails> list =stationDetailsService.intermittentStations(from,to);
+        System.out.println(list.size());
+        return new ResponseEntity<>(list,HttpStatus.OK);
+    }
 }

@@ -24,6 +24,7 @@ public interface StationDetailsRepository extends JpaRepository <StationDetails,
     List<StationDetails> findByIsIntermediateStationsAndIsCentral(boolean isIntermediate,boolean isCentral);
     List<StationDetails> findByIsIntermediateStationsAndIsJunctionAndIsCentral(boolean intermediate,boolean junction,boolean central);
     List<StationDetails> findByIsMajorStop(boolean b);
+    List<StationDetails> findByLatitudeBetweenAndLongitudeBetweenAndIsMajorStop(Double minLat, Double maxLat, Double minLon, Double maxLon,Boolean t);
     // @Query("SELECT t.trainId FROM trainroute t WHERE t.stationId = ?1 OR t.stationId = ?2")
     // List<Integer> findTrainIdsByStationsAndDayOfWeek(int stationId1, int stationId2);
 
