@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.StationDetails.model.JunctionCount;
 import com.example.StationDetails.model.StationDetails;
 import com.example.StationDetails.service.StationDetailsService;
 import java.util.*;
@@ -59,5 +60,20 @@ public class StationDetailsController {
         List<StationDetails> list =stationDetailsService.intermittentStations(from,to);
         System.out.println(list.size());
         return new ResponseEntity<>(list,HttpStatus.OK);
+    }
+    @GetMapping("/intermittentJunction")
+    public ResponseEntity<List<JunctionCount>> intermittentJunction(@RequestParam("from") String from,@RequestParam("to") String to){
+        long startTime = System.nanoTime();
+        List<JunctionCount> list =stationDetailsService.intermittentJunction(from, to);
+        long endTime = System.nanoTime(); 
+        long elapsedTimeMicro = (endTime - startTime) / 1000; 
+        System.out.println("Method execution time: " + elapsedTimeMicro + " microseconds");
+    
+        System.out.println(list.size());
+        return new ResponseEntity<>(list,HttpStatus.OK);
+    }
+    @GetMapping("/add")
+    public Object add(@RequestParam("from") String from,@RequestParam("to") String to){
+        return stationDetailsService.add(from , to);
     }
 }

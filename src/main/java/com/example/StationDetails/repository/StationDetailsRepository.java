@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.StationDetails.model.StationDetails;
@@ -25,6 +26,22 @@ public interface StationDetailsRepository extends JpaRepository <StationDetails,
     List<StationDetails> findByIsIntermediateStationsAndIsJunctionAndIsCentral(boolean intermediate,boolean junction,boolean central);
     List<StationDetails> findByIsMajorStop(boolean b);
     List<StationDetails> findByLatitudeBetweenAndLongitudeBetweenAndIsMajorStop(Double minLat, Double maxLat, Double minLon, Double maxLon,Boolean t);
+    
+    @Query(value = "SELECT JnBetween(?1, ?2)", nativeQuery = true)
+    Object callJnBetween(String fromStation, String toStation);
+    
+    @Query(value =  "SELECT COUNT(*) " +
+                    "FROM ( " +
+                    "    SELECT DISTINCT TrainNo " +
+                    "    FROM railway.trainroute " +
+                    "    WHERE StationCode IN (:fromStation, :toStation)  " +
+                    "    GROUP BY TrainNo " +
+                    "    HAVING COUNT(StationCode) > 1 " +
+                    "       AND MAX(CASE WHEN StationCode = :fromStation THEN StopNumber END) < " +
+                    "           MAX(CASE WHEN StationCode = :toStation THEN StopNumber END)" +
+                    ") AS subquery", nativeQuery = true)
+    int countTrainNo(@Param("fromStation") String fromStation, @Param("toStation") String toStation);
+
     // @Query("SELECT t.trainId FROM trainroute t WHERE t.stationId = ?1 OR t.stationId = ?2")
     // List<Integer> findTrainIdsByStationsAndDayOfWeek(int stationId1, int stationId2);
 

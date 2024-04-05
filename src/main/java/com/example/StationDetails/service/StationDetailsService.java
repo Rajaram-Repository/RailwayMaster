@@ -4,11 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.StationDetails.repository.StationDetailsRepository;
+import com.example.StationDetails.model.JunctionCount;
 import com.example.StationDetails.model.StationDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 @Service
 public class StationDetailsService {
@@ -53,6 +59,29 @@ public class StationDetailsService {
         list.add(2);
         return list;
     }
+    public List<JunctionCount> intermittentJunction (String from,String to){
+        List<StationDetails> stations = intermittentStations(from,to);
+        Map<Integer, List<JunctionCount>> treeMap = new TreeMap<>(Collections.reverseOrder());
+        System.out.println("station  - "+stations.size());
+        for(StationDetails sd : stations){
+            String station = sd.getStationCode();
+            Integer fromCount = stationDetailsRepository.countTrainNo(from,station);
+            Integer toCount = stationDetailsRepository.countTrainNo(station,to);
+            if(fromCount == null || toCount == null || fromCount<=0 || toCount <=0)
+                continue;
+            int min = Math.min(fromCount,toCount);
+            JunctionCount j = new JunctionCount(sd,fromCount,toCount);
+            if(!treeMap.containsKey((min)))
+                treeMap.put(min, new ArrayList<>());
+            treeMap.get(min).add(j);
+        }
+        List<JunctionCount> jn = new ArrayList<>();
+        for( List<JunctionCount> map : treeMap.values()){
+            jn.addAll( map);
+        }
+        return jn;
+    }
+
     public List<StationDetails> intermittentStations(String from,String to){
         List<StationDetails> fromStation = stationDetailsRepository.findByStationCode(from);
         List<StationDetails> toStation = stationDetailsRepository.findByStationCode(to);
@@ -74,9 +103,9 @@ public class StationDetailsService {
             toLongitude-=diffLon;
         }
         if(latdistanceInKms<minDistance){
-            double diffLon = diff(minDistance/2);
-            fromLatitude+=diffLon;
-            toLatitude-=diffLon;
+            double diffLat = diff(minDistance/2);
+            fromLatitude+=diffLat;
+            toLatitude-=diffLat;
         }
         distanceInKms = distance(fromLatitude, toLatitude, fromLongitude, toLongitude, 0.0, 0.0);
         latdistanceInKms = distance(fromLatitude, toLatitude, 0.0, 0.0, 0.0, 0.0);
@@ -85,8 +114,7 @@ public class StationDetailsService {
         System.out.println("Distance : "+distanceInKms +" lat Dis : "+latdistanceInKms+" lon Dis : "+londistanceInKms +"  min dis : "+minDistance);
         System.out.println(" from - "+fromLatitude+"  -  "+fromLongitude);
         System.out.println(" to - "+toLatitude+"  -  "+toLongitude);
-        Double latitudeDiff =Math.abs(fromLatitude-toLatitude);
-        Double latitudeDIff =Math.abs(fromLongitude-toLongitude);
+
         Double minLatitude = Math.min(fromLatitude,toLatitude);
         Double maxLatitude = Math.max(fromLatitude,toLatitude);
         Double minLongitude = Math.min(fromLongitude,toLongitude);
@@ -94,7 +122,7 @@ public class StationDetailsService {
         return stationDetailsRepository.findByLatitudeBetweenAndLongitudeBetweenAndIsMajorStop(minLatitude-0.2, maxLatitude+0.2, minLongitude-.2, maxLongitude+0.2,true);
     }
     public static double distance(double lat1, double lat2, double lon1, double lon2, double el1, double el2) {
-        final int R = 6371; // Radius of the Earth in kilometers
+        final int R = 6371; 
 
         double latDistance = Math.toRadians(lat2 - lat1);
         double lonDistance = Math.toRadians(lon2 - lon1);
@@ -112,6 +140,10 @@ public class StationDetailsService {
         double earthRadius = 6371.0;
         double distanceInRadians = kms / earthRadius;
         return Math.toDegrees(distanceInRadians);
+    }
+
+    public Object add(String from, String to) {
+        return stationDetailsRepository.callJnBetween(from, to) ;
     }
 
 }
