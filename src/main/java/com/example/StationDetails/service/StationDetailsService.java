@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
 
@@ -59,15 +60,35 @@ public class StationDetailsService {
         list.add(2);
         return list;
     }
-    public List<JunctionCount> intermittentJunction (String from,String to){
+    public List<JunctionCount> intermittentJunction (String from,String to,Boolean flag){
         List<StationDetails> stations = intermittentStations(from,to);
         Map<Integer, List<JunctionCount>> treeMap = new TreeMap<>(Collections.reverseOrder());
+        List<Object []> fromObj =null;
+        List<Object []> toObj =null;
+        if(flag){
+            fromObj=stationDetailsRepository.findTrainDetailsList(aroundStation(from));
+            toObj=stationDetailsRepository.findTrainDetailsList(aroundStation(to));
+        }
+        else{
+            fromObj =stationDetailsRepository.findTrainDetails(from);
+            toObj =stationDetailsRepository.findTrainDetails(to);
+        }
+        Map<Integer,Integer> fromMap = objToMap(fromObj);
+        Map<Integer,Integer> toMap = objToMap(toObj);
         System.out.println("station  - "+stations.size());
         for(StationDetails sd : stations){
             String station = sd.getStationCode();
-            Integer fromCount = stationDetailsRepository.countTrainNo(from,station);
-            Integer toCount = stationDetailsRepository.countTrainNo(station,to);
-            if(fromCount == null || toCount == null || fromCount<=0 || toCount <=0)
+            Integer fromCount=0;
+            Integer toCount =0;
+            List<Object []> midObj =stationDetailsRepository.findTrainDetails(station);
+            Map<Integer,Integer> midMap =objToMap(midObj);
+            for(Entry<Integer, Integer> map : midMap.entrySet()){
+                if(fromMap.containsKey(map.getKey()) && fromMap.get(map.getKey())<map.getValue() )
+                        fromCount++;
+                if(toMap.containsKey(map.getKey()) && map.getValue()>toMap.get(map.getKey()) )
+                        toCount++;
+            }
+            if(fromCount<=0 || toCount <=0)
                 continue;
             int min = Math.min(fromCount,toCount);
             JunctionCount j = new JunctionCount(sd,fromCount,toCount);
@@ -75,13 +96,17 @@ public class StationDetailsService {
                 treeMap.put(min, new ArrayList<>());
             treeMap.get(min).add(j);
         }
-        List<JunctionCount> jn = new ArrayList<>();
-        for( List<JunctionCount> map : treeMap.values()){
-            jn.addAll( map);
-        }
-        return jn;
+        List<JunctionCount> jun = new ArrayList<>();
+        for( List<JunctionCount> map : treeMap.values())
+            jun.addAll( map);
+        return jun;
     }
-
+    public Map<Integer,Integer> objToMap(List<Object []> object){
+        Map<Integer,Integer> map = new HashMap<>();
+        for(Object [] obj : object)
+            map.put((Integer) obj[0],(Integer) obj[2]);
+        return map;
+    }
     public List<StationDetails> intermittentStations(String from,String to){
         List<StationDetails> fromStation = stationDetailsRepository.findByStationCode(from);
         List<StationDetails> toStation = stationDetailsRepository.findByStationCode(to);
@@ -120,6 +145,17 @@ public class StationDetailsService {
         Double minLongitude = Math.min(fromLongitude,toLongitude);
         Double maxLongitude = Math.max(fromLongitude,toLongitude);
         return stationDetailsRepository.findByLatitudeBetweenAndLongitudeBetweenAndIsMajorStop(minLatitude-0.2, maxLatitude+0.2, minLongitude-.2, maxLongitude+0.2,true);
+    }
+    public List<String> aroundStation(String code){
+        List<StationDetails> fromStation = stationDetailsRepository.findByStationCode(code);
+        Double fromLatitude=fromStation.get(0).getLatitude();
+        Double fromLongitude=fromStation.get(0).getLongitude();
+        System.out.println("---------------");
+        List<String> stationsAround = new ArrayList<>();
+        List<StationDetails> stationDetails = stationDetailsRepository.findByLatitudeBetweenAndLongitudeBetweenAndIsIntermediateStations(fromLatitude - 0.4, fromLatitude + 0.4, fromLongitude - 0.4, fromLongitude + 0.4, false);
+        for(StationDetails s : stationDetails)
+            stationsAround.add(s.getStationCode());
+        return stationsAround;
     }
     public static double distance(double lat1, double lat2, double lon1, double lon2, double el1, double el2) {
         final int R = 6371; 

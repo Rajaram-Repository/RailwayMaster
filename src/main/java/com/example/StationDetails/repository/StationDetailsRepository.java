@@ -26,7 +26,8 @@ public interface StationDetailsRepository extends JpaRepository <StationDetails,
     List<StationDetails> findByIsIntermediateStationsAndIsJunctionAndIsCentral(boolean intermediate,boolean junction,boolean central);
     List<StationDetails> findByIsMajorStop(boolean b);
     List<StationDetails> findByLatitudeBetweenAndLongitudeBetweenAndIsMajorStop(Double minLat, Double maxLat, Double minLon, Double maxLon,Boolean t);
-    
+    List<StationDetails> findByLatitudeBetweenAndLongitudeBetweenAndIsIntermediateStations(Double minLat, Double maxLat, Double minLon, Double maxLon,Boolean t);
+    List<String> findStationCodeByLatitudeBetweenAndLongitudeBetweenAndIsIntermediateStations(Double minLat, Double maxLat, Double minLon, Double maxLon,Boolean t);
     @Query(value = "SELECT JnBetween(?1, ?2)", nativeQuery = true)
     Object callJnBetween(String fromStation, String toStation);
     
@@ -41,7 +42,38 @@ public interface StationDetailsRepository extends JpaRepository <StationDetails,
                     "           MAX(CASE WHEN StationCode = :toStation THEN StopNumber END)" +
                     ") AS subquery", nativeQuery = true)
     int countTrainNo(@Param("fromStation") String fromStation, @Param("toStation") String toStation);
+     
+    @Query(value =  "SELECT COUNT(*) " +
+                    "FROM ( " +
+                    "    SELECT DISTINCT TrainNo " +
+                    "    FROM railway.trainroute " +
+                    "    WHERE StationCode IN (:fromStation) AND StationCode=:toStation  " +
+                    "    GROUP BY TrainNo " +
+                    "    HAVING COUNT(StationCode) > 1 " +
+                    "       AND MAX(CASE WHEN StationCode IN (:fromStation) THEN StopNumber END) < " +
+                    "           MAX(CASE WHEN StationCode = :toStation THEN StopNumber END)" +
+                    ") AS subquery", nativeQuery = true)
+    int countTrainNoFromAll(@Param("fromStation") List<String> fromStation, @Param("toStation") String toStation);
+    @Query(value =  "SELECT COUNT(*) " +
+                    "FROM ( " +
+                    "    SELECT DISTINCT TrainNo " +
+                    "    FROM railway.trainroute " +
+                    "    WHERE StationCode =:fromStation AND StationCode IN (:toStation)  " +
+                    "    GROUP BY TrainNo " +
+                    "    HAVING COUNT(DISTINCT StationCode) > 1 " +
+                    "       AND MAX(CASE WHEN StationCode = :fromStation THEN StopNumber END) < " +
+                    "           MAX(CASE WHEN StationCode IN (:toStation) THEN StopNumber END)" +
+                    ") AS subquery", nativeQuery = true)
+    int countTrainNoToAll(@Param("fromStation") String fromStation, @Param("toStation") List<String> toStation);
 
+    @Query(value = "SELECT TrainNo, StationCode, StopNumber " +
+                    "FROM railway.trainroute " +
+                    "WHERE StationCode =:Station AND StopNumber IS NOT NULL", nativeQuery = true)
+    List<Object[]> findTrainDetails(@Param("Station") String Station);
+    @Query(value = "SELECT TrainNo, StationCode, StopNumber " +
+                    "FROM railway.trainroute " +
+                    "WHERE StationCode IN (:Station) AND StopNumber IS NOT NULL", nativeQuery = true)
+    List<Object[]> findTrainDetailsList(@Param("Station") List<String> Station);
     // @Query("SELECT t.trainId FROM trainroute t WHERE t.stationId = ?1 OR t.stationId = ?2")
     // List<Integer> findTrainIdsByStationsAndDayOfWeek(int stationId1, int stationId2);
 

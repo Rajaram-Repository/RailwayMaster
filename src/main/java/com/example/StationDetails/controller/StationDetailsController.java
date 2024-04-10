@@ -62,9 +62,9 @@ public class StationDetailsController {
         return new ResponseEntity<>(list,HttpStatus.OK);
     }
     @GetMapping("/intermittentJunction")
-    public ResponseEntity<List<JunctionCount>> intermittentJunction(@RequestParam("from") String from,@RequestParam("to") String to){
+    public ResponseEntity<List<JunctionCount>> intermittentJunction(@RequestParam("from") String from,@RequestParam("to") String to,@RequestParam("around") Boolean flag){
         long startTime = System.nanoTime();
-        List<JunctionCount> list =stationDetailsService.intermittentJunction(from, to);
+        List<JunctionCount> list =stationDetailsService.intermittentJunction(from, to,flag);
         long endTime = System.nanoTime(); 
         long elapsedTimeMicro = (endTime - startTime) / 1000; 
         System.out.println("Method execution time: " + elapsedTimeMicro + " microseconds");
