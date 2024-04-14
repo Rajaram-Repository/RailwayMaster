@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.StationDetails.repository.StationDetailsRepository;
+import com.example.StationDetails.repository.TrainRouteRepository;
 import com.example.StationDetails.model.JunctionCount;
 import com.example.StationDetails.model.StationDetails;
 
@@ -21,6 +22,10 @@ import java.util.TreeMap;
 public class StationDetailsService {
     @Autowired 
     private StationDetailsRepository stationDetailsRepository;
+    private TrainRouteRepository trainRouteRepository;
+
+
+    
     public List<StationDetails> getAllStations(){
         return stationDetailsRepository.findAll();
     }
@@ -55,7 +60,6 @@ public class StationDetailsService {
         return stationDetailsRepository.findByIsMajorStop(true);
     }
     public List<Integer> findTrainIDs(int stationId1,int stationId2){
-        // List <Integer> list = stationDetailsRepository.findTrainIdsByStationsAndDayOfWeek(stationId1, stationId2);
         List<Integer> list = new ArrayList<>();
         list.add(2);
         return list;
@@ -66,12 +70,12 @@ public class StationDetailsService {
         List<Object []> fromObj =null;
         List<Object []> toObj =null;
         if(flag){
-            fromObj=stationDetailsRepository.findTrainDetailsList(aroundStation(from));
-            toObj=stationDetailsRepository.findTrainDetailsList(aroundStation(to));
+            fromObj=trainRouteRepository.findTrainDetailsList(aroundStation(from));
+            toObj=trainRouteRepository.findTrainDetailsList(aroundStation(to));
         }
         else{
-            fromObj =stationDetailsRepository.findTrainDetails(from);
-            toObj =stationDetailsRepository.findTrainDetails(to);
+            fromObj =trainRouteRepository.findTrainDetails(from);
+            toObj =trainRouteRepository.findTrainDetails(to);
         }
         Map<Integer,Integer> fromMap = objToMap(fromObj);
         Map<Integer,Integer> toMap = objToMap(toObj);
@@ -80,7 +84,7 @@ public class StationDetailsService {
             String station = sd.getStationCode();
             Integer fromCount=0;
             Integer toCount =0;
-            List<Object []> midObj =stationDetailsRepository.findTrainDetails(station);
+            List<Object []> midObj =trainRouteRepository.findTrainDetails(station);
             Map<Integer,Integer> midMap =objToMap(midObj);
             for(Entry<Integer, Integer> map : midMap.entrySet()){
                 if(fromMap.containsKey(map.getKey()) && fromMap.get(map.getKey())<map.getValue() )
@@ -150,7 +154,6 @@ public class StationDetailsService {
         List<StationDetails> fromStation = stationDetailsRepository.findByStationCode(code);
         Double fromLatitude=fromStation.get(0).getLatitude();
         Double fromLongitude=fromStation.get(0).getLongitude();
-        System.out.println("---------------");
         List<String> stationsAround = new ArrayList<>();
         List<StationDetails> stationDetails = stationDetailsRepository.findByLatitudeBetweenAndLongitudeBetweenAndIsIntermediateStations(fromLatitude - 0.4, fromLatitude + 0.4, fromLongitude - 0.4, fromLongitude + 0.4, false);
         for(StationDetails s : stationDetails)
