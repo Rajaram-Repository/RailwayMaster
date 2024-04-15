@@ -68,6 +68,10 @@ public class TrainDetailsService {
         return trainDetailsRepository.findTrainRoute(no);
     }
 
+    public List<TrainDetails> trainById(int id) {
+        return trainDetailsRepository.findById(id);
+    }
+
     public List<Object[]> trainNoRouteIntermediateStations(int no, boolean flag) {
         return trainDetailsRepository.findTrainRouteIntermediateStations(no, flag);
     }

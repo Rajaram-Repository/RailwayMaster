@@ -24,7 +24,7 @@ public class TrainDetailsController {
 
     @GetMapping("/id/{id}")
     public ResponseEntity<List<TrainDetails>> getTrainsById(@PathVariable int id) {
-        List<TrainDetails> list = trainDetailsService.trainNo(id);
+        List<TrainDetails> list = trainDetailsService.trainById(id);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 

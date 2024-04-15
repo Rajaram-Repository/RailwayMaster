@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.StationDetails.model.JunctionCount;
 import com.example.StationDetails.model.StationDetails;
 import com.example.StationDetails.service.StationDetailsService;
@@ -36,6 +35,20 @@ public class StationDetailsController {
     @GetMapping("/code/{code}")
     public ResponseEntity<List<StationDetails>> getStationByCode(@PathVariable String code) {
         List<StationDetails> station = stationDetailsService.getStaionByCode(code);
+        System.out.println(station.size());
+        return new ResponseEntity<>(station, HttpStatus.OK);
+    }
+
+    @GetMapping("/train/{code}")
+    public ResponseEntity<List<Object[]>> getStationCrossTrain(@PathVariable String code) {
+        List<Object[]> station = stationDetailsService.getStationCrossTrain(code);
+        System.out.println(station.size());
+        return new ResponseEntity<>(station, HttpStatus.OK);
+    }
+
+    @GetMapping("/around/{code}/{kms}")
+    public ResponseEntity<List<String>> getStationAround(@PathVariable String code, @PathVariable int kms) {
+        List<String> station = stationDetailsService.getStationAround(code, kms);
         System.out.println(station.size());
         return new ResponseEntity<>(station, HttpStatus.OK);
     }

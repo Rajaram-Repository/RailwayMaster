@@ -7,11 +7,11 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "traindetails")
 public class TrainDetails {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private int id;
+    private Integer id;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<TrainRoute> t_train;
@@ -20,7 +20,7 @@ public class TrainDetails {
     private String trainName;
 
     @Column(name = "TrainNo")
-    private int trainNo;
+    private Integer trainNo;
 
     @Column(name = "TrainNumberString")
     private String trainNumberString;
@@ -44,46 +44,46 @@ public class TrainDetails {
     private String destinationCode;
 
     @Column(name = "Sun")
-    private boolean sun;
+    private Boolean sun;
 
     @Column(name = "Mon")
-    private boolean mon;
+    private Boolean mon;
 
     @Column(name = "Tue")
-    private boolean tue;
+    private Boolean tue;
 
     @Column(name = "Wed")
-    private boolean wed;
+    private Boolean wed;
 
     @Column(name = "Thu")
-    private boolean thu;
+    private Boolean thu;
 
     @Column(name = "Fri")
-    private boolean fri;
+    private Boolean fri;
 
     @Column(name = "Sat")
-    private boolean sat;
+    private Boolean sat;
 
-    @Column(name = "TrainType")
-    private String trainType;
+    @Column(name = "TraIntegerype")
+    private String traIntegerype;
 
     @Column(name = "IsUnreserved")
-    private boolean isUnreserved;
+    private Boolean isUnreserved;
 
     @Column(name = "Rating")
-    private float rating;
+    private Float rating;
 
     @Column(name = "FoodRating")
-    private float foodRating;
+    private Float foodRating;
 
     @Column(name = "PunctualityRating")
-    private float punctualityRating;
+    private Float punctualityRating;
 
     @Column(name = "CleanlinessRating")
-    private float cleanlinessRating;
+    private Float cleanlinessRating;
 
     @Column(name = "RatingCount")
-    private int ratingCount;
+    private Integer ratingCount;
 
     @Column(name = "TotalDuration")
     private String totalDuration;
@@ -95,7 +95,7 @@ public class TrainDetails {
     private String toCity;
 
     @Column(name = "Pantry")
-    private boolean pantry;
+    private Boolean pantry;
 
     @Column(name = "ErrorMsg")
     private String errorMsg;
@@ -105,12 +105,15 @@ public class TrainDetails {
     public TrainDetails() {
         // Default constructor
     }
-    public TrainDetails(int id, Set<TrainRoute> t_train, String trainName, int trainNo, String trainNumberString,
-                 String coachPosition, String classes, String sourceStation, String destination, String sourceCode,
-                 String destinationCode, boolean sun, boolean mon, boolean tue, boolean wed, boolean thu, boolean fri,
-                 boolean sat, String trainType, boolean isUnreserved, float rating, float foodRating,
-                 float punctualityRating, float cleanlinessRating, int ratingCount, String totalDuration, String fromCity,
-                 String toCity, boolean pantry, String errorMsg) {
+
+    public TrainDetails(Integer id, Set<TrainRoute> t_train, String trainName, Integer trainNo,
+            String trainNumberString,
+            String coachPosition, String classes, String sourceStation, String destination, String sourceCode,
+            String destinationCode, Boolean sun, Boolean mon, Boolean tue, Boolean wed, Boolean thu, Boolean fri,
+            Boolean sat, String traIntegerype, Boolean isUnreserved, Float rating, Float foodRating,
+            Float punctualityRating, Float cleanlinessRating, Integer ratingCount, String totalDuration,
+            String fromCity,
+            String toCity, Boolean pantry, String errorMsg) {
         this.id = id;
         this.t_train = t_train;
         this.trainName = trainName;
@@ -129,7 +132,7 @@ public class TrainDetails {
         this.thu = thu;
         this.fri = fri;
         this.sat = sat;
-        this.trainType = trainType;
+        this.traIntegerype = traIntegerype;
         this.isUnreserved = isUnreserved;
         this.rating = rating;
         this.foodRating = foodRating;
@@ -142,12 +145,13 @@ public class TrainDetails {
         this.pantry = pantry;
         this.errorMsg = errorMsg;
     }
+
     // Getters and Setters
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -167,11 +171,11 @@ public class TrainDetails {
         this.trainName = trainName;
     }
 
-    public int getTrainNo() {
+    public Integer getTrainNo() {
         return trainNo;
     }
 
-    public void setTrainNo(int trainNo) {
+    public void setTrainNo(Integer trainNo) {
         this.trainNo = trainNo;
     }
 
@@ -231,115 +235,115 @@ public class TrainDetails {
         this.destinationCode = destinationCode;
     }
 
-    public boolean isSun() {
+    public Boolean isSun() {
         return sun;
     }
 
-    public void setSun(boolean sun) {
+    public void setSun(Boolean sun) {
         this.sun = sun;
     }
 
-    public boolean isMon() {
+    public Boolean isMon() {
         return mon;
     }
 
-    public void setMon(boolean mon) {
+    public void setMon(Boolean mon) {
         this.mon = mon;
     }
 
-    public boolean isTue() {
+    public Boolean isTue() {
         return tue;
     }
 
-    public void setTue(boolean tue) {
+    public void setTue(Boolean tue) {
         this.tue = tue;
     }
 
-    public boolean isWed() {
+    public Boolean isWed() {
         return wed;
     }
 
-    public void setWed(boolean wed) {
+    public void setWed(Boolean wed) {
         this.wed = wed;
     }
 
-    public boolean isThu() {
+    public Boolean isThu() {
         return thu;
     }
 
-    public void setThu(boolean thu) {
+    public void setThu(Boolean thu) {
         this.thu = thu;
     }
 
-    public boolean isFri() {
+    public Boolean isFri() {
         return fri;
     }
 
-    public void setFri(boolean fri) {
+    public void setFri(Boolean fri) {
         this.fri = fri;
     }
 
-    public boolean isSat() {
+    public Boolean isSat() {
         return sat;
     }
 
-    public void setSat(boolean sat) {
+    public void setSat(Boolean sat) {
         this.sat = sat;
     }
 
-    public String getTrainType() {
-        return trainType;
+    public String getTraIntegerype() {
+        return traIntegerype;
     }
 
-    public void setTrainType(String trainType) {
-        this.trainType = trainType;
+    public void setTraIntegerype(String traIntegerype) {
+        this.traIntegerype = traIntegerype;
     }
 
-    public boolean isUnreserved() {
+    public Boolean isUnreserved() {
         return isUnreserved;
     }
 
-    public void setUnreserved(boolean unreserved) {
+    public void setUnreserved(Boolean unreserved) {
         isUnreserved = unreserved;
     }
 
-    public float getRating() {
+    public Float getRating() {
         return rating;
     }
 
-    public void setRating(float rating) {
+    public void setRating(Float rating) {
         this.rating = rating;
     }
 
-    public float getFoodRating() {
+    public Float getFoodRating() {
         return foodRating;
     }
 
-    public void setFoodRating(float foodRating) {
+    public void setFoodRating(Float foodRating) {
         this.foodRating = foodRating;
     }
 
-    public float getPunctualityRating() {
+    public Float getPunctualityRating() {
         return punctualityRating;
     }
 
-    public void setPunctualityRating(float punctualityRating) {
+    public void setPunctualityRating(Float punctualityRating) {
         this.punctualityRating = punctualityRating;
     }
 
-    public float getCleanlinessRating() {
+    public Float getCleanlinessRating() {
         return cleanlinessRating;
     }
 
-    public void setCleanlinessRating(float cleanlinessRating) {
+    public void setCleanlinessRating(Float cleanlinessRating) {
         this.cleanlinessRating = cleanlinessRating;
     }
 
-    public int getRatingCount() {
+    public Integer getRatingCount() {
         return ratingCount;
     }
 
-    public void setRatingCount(int ratingCount) {
+    public void setRatingCount(Integer ratingCount) {
         this.ratingCount = ratingCount;
     }
 
@@ -367,11 +371,11 @@ public class TrainDetails {
         this.toCity = toCity;
     }
 
-    public boolean isPantry() {
+    public Boolean isPantry() {
         return pantry;
     }
 
-    public void setPantry(boolean pantry) {
+    public void setPantry(Boolean pantry) {
         this.pantry = pantry;
     }
 
@@ -403,7 +407,7 @@ public class TrainDetails {
                 ", thu=" + thu +
                 ", fri=" + fri +
                 ", sat=" + sat +
-                ", trainType='" + trainType + '\'' +
+                ", traIntegerype='" + traIntegerype + '\'' +
                 ", isUnreserved=" + isUnreserved +
                 ", rating=" + rating +
                 ", foodRating=" + foodRating +
